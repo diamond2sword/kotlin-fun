@@ -1,4 +1,46 @@
 #!/bin/bash
+
+main () {
+	apt update && apt upgrade
+	pkg --check-mirror upgrade
+	apt install vim git expect gradle openssh
+	add_syntax_highlighting
+	add_bash_completion
+	edit_vim_settings
+	create_project_maker
+	clone_kotlin_repo
+}
+
+clone_kotlin_repo () {
+	git clone https://github.com/diamond2sword/kotlin-fun $HOME
+}
+
+create_project_maker () {
+	echo "$PROJECT_MAKER" > $HOME/new_project.sh
+	chmod +x $HOME/new_project.sh
+	rm $HOME/../usr/bin/new_project.sh
+	ln -s $HOME/new_project.sh $HOME/../usr/bin/new_project.sh
+}
+
+edit_vim_settings () {
+cat << "EOF" >> $HOME/../usr/share/vim/vimrc
+	set tabstop=4 shiftwidth=4
+EOF
+}
+
+add_bash_completion () {
+	mkdir $HOME/bash_completion.d
+	curl -LA gradle-completion https://edub.me/gradle-completion-bash -o $HOME/bash_completion.d/gradle-completion.bash
+	touch $HOME/.bashrc
+	echo 'for completion_script in $HOME/bash_completion.d/*; { source $completion_script; }' >> $HOME/.bashrc
+}
+
+add_syntax_highlighting () {
+	git clone https://github.com/udalov/kotlin-vim.git $HOME/.vim/pack/plugins/start/kotlin-vim
+}
+
+PROJECT_MAKER=$(cat << "EOF"
+#!/bin/bash
 main () {
 	start_gradle_daemon
 	create_project
@@ -31,7 +73,7 @@ create_main_class () {
 
 change_kotlin_version () {
 	while :; do {
-		[[ "$(cat $PROJECT_DIR/app/build.gradle 2>/dev/null)" ]] && break
+			[[ "$(cat $PROJECT_DIR/app/build.gradle 2>/dev/null)" ]] && break
 	} done
 	append_line $PROJECT_DIR/app/build.gradle 'dependencies{implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.72"}' SED_KOTLIN_VERSION
 }
@@ -42,7 +84,7 @@ create_project () (
 	do_gradle_init
 )
 
-start_gradle_daemon () {																   
+start_gradle_daemon () {											  
 	gradle --daemon
 }
 
@@ -85,7 +127,7 @@ fun main() {
 EOF2
 )"
 }
-																						
+
 PROJECT_NAME="$1"; shift
 PROJECT_BASE_DIR="$1"
 PROJECT_DIR="$PROJECT_BASE_DIR/$PROJECT_NAME"
@@ -94,3 +136,7 @@ PROJECT_DIR="$PROJECT_BASE_DIR/$PROJECT_NAME"
 ! mkdir -p $PROJECT_DIR
 
 main
+EOF
+)
+
+yes | main "$@"
