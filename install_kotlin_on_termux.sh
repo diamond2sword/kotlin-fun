@@ -12,7 +12,8 @@ main () {
 }
 
 clone_kotlin_repo () {
-	git clone https://github.com/diamond2sword/kotlin-fun $HOME
+	cd $HOME
+	git clone https://github.com/diamond2sword/kotlin-fun
 }
 
 create_project_maker () {
