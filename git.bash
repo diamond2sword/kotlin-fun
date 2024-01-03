@@ -15,7 +15,7 @@ declare_strings () {
 	GH_PASSWORD="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"
 	SSH_KEY_PASSPHRASE="for(;C==0;){std::cout<<C++}"
 	DEFAULT_GIT_COMMAND_NAME="GIT_RESET"
-	THIS_FILE_NAME="git.sh"
+	THIS_FILE_NAME="git.bash"
 	BRANCH_NAME="main"
 	COMMIT_NAME="update project"
 	PROJECT_NAME="project"
@@ -78,7 +78,6 @@ declare_git_commands () {
 		[[ "$KEY_NAME" == "REPO_NAME" ]] && {
 			REPO_NAME="$NEW_VALUE"
 		}
-
 		sed -i '{
 			/^declare_strings/{
 				:start
